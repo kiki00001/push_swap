@@ -164,15 +164,15 @@ static int	str_parser(int argc, char **argv)
 
 char	**argv_parser(int argc, char **argv)
 {
-	char	**arguments;
+	char	**arg;
 	char	**temp;
 	int		i;
 	int		j;
 
 	i = 0;
 	j = 0;
-	arguments = (char **)malloc(sizeof(char *) * (str_parser(argc, argv) + 1));
-	if (!arguments)
+	arg = (char **)malloc(sizeof(char *) * (str_parser(argc, argv) + 1));
+	if (!arg)
 		ft_error();
 	while (argc-- > 1)
 	{
@@ -181,11 +181,11 @@ char	**argv_parser(int argc, char **argv)
 		if (!temp)
 			ft_error();
 		while (temp[i] != 0)
-			arguments[j++] = temp[i++];
+			arg[j++] = temp[i++];
 		free(temp);
 	}
-	arguments[j] = 0;
-	return (arguments);
+	arg[j] = 0;
+	return (arg);
 }
 
 static int	ft_integer_check(const char *str)
@@ -283,14 +283,14 @@ static t_stack	*add_element(int data)
 	return (temp);
 }
 
-void	stack_init(t_stack **a, int len, int *arguments)
+void	stack_init(t_stack **a, int len, int *arg)
 {
 	t_stack	*new;
 
-	*a = add_element(arguments[len - 1]);
+	*a = add_element(arg[len - 1]);
 	while (len > 1)
 	{
-		new = add_element(arguments[len - 2]);
+		new = add_element(arg[len - 2]);
 		new->next = *a;
 		new->prev = (*a)->prev;
 		(*a)->prev->next = new;
@@ -298,6 +298,29 @@ void	stack_init(t_stack **a, int len, int *arguments)
 		(*a) = new;
 		len--;
 	}
+}
+
+int	ft_int_check_return_len(int **result, char **arg)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	j = 0;
+	while (arg[i] != 0)
+		i++;
+	*result = (int *)malloc(sizeof(int) * i);
+	while (arg[j] != 0)
+	{
+		(*result)[j] = ft_integer_check(arg[j]);
+		//printf("result : %d\n" , (*result)[k++]);
+        free(arg[j]);
+		j++;
+	}
+	free(arg[j]);
+	free(arg);
+	arg = 0;
+	return (i);
 }
 
 int	main(int argc, char **argv)
@@ -311,9 +334,9 @@ int	main(int argc, char **argv)
 	arg = argv_parser(argc, argv);    //arguments에 인수로 받은 각 값을 넣음
 /*
     int i =0;
-    while(arguments[i])
+    while(arg[i])
     {   
-        printf(" : %s \n", arguments[i]);
+        printf(" : %s \n", arg[i]);
         i++;
     }
 */
